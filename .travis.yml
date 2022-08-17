@@ -6,7 +6,7 @@ before_install:
    - docker build -t cspalevic/react-test -f ./client/Dockerfile.dev ./client
 
 script:
-   - docker run cspalevic/react-test npm test -- --coverage
+   - docker run -e CI=true cspalevic/react-test npm test
 
 after_success:
    - docker build -t cspalevic/multi-client ./client
