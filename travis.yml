@@ -13,3 +13,8 @@ after_success:
    - docker build -t cedomirspalevic/multi-nginx ./nginx
    - docker build -t cedomirspalevic/multi-api ./api
    - docker build -t cedomirspalevic/multi-worker ./worker
+   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+   - docker push cedomirspalevic/multi-client
+   - docker push cedomirspalevic/multi-nginx
+   - docker push cedomirspalevic/multi-api
+   - docker push cedomirspalevic/multi-worker 
