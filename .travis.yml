@@ -19,7 +19,8 @@ after_success:
    - docker push cspalevic/multi-api
    - docker push cspalevic/multi-worker 
 
-provider: elasticbeanstalk
+deploy:
+   provider: elasticbeanstalk
    region: "us-east-1"
    app: "fibonacci-multi-container-system"
    env: "Fibonaccimulticontainersystem-env"
