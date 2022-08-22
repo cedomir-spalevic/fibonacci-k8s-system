@@ -18,3 +18,13 @@ after_success:
    - docker push cspalevic/multi-nginx
    - docker push cspalevic/multi-api
    - docker push cspalevic/multi-worker 
+
+provider: elasticbeanstalk
+   region: "us-east-1"
+   app: "fibonacci-multi-container-system"
+   env: "Fibonaccimulticontainersystem-env"
+   bucket_name: "elasticbeanstalk-us-east-1-075433893437"
+   on:
+      branch: main
+   access_key_id: $AWS_ACCESS_KEY_ID
+   secret_access_key: $AWS_SECRET_ACCESS_KEY
