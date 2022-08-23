@@ -17,9 +17,13 @@ const pgClient = new Pool({
 });
 pgClient.on("error", () => console.log("Lost PG connection"));
 pgClient.on("connect", (client) => {
+    console.log("Connected to PG");
     client
         .query("CREATE TABLE IF NOT EXISTS values (number INT)")
-        .catch((err) => console.log(err));
+        .catch((err) => {
+            console.log("Error creating table");
+            console.log(err);
+        });
 });
 
 const redisClient = redis.createClient({
@@ -52,13 +56,17 @@ app.get("/values/current", async (req, res) => {
 });
 
 app.post("/values", async (req, res) => {
+    console.log("In values");
     const index = req.body.index;
     if (parseInt(index) > 40) {
         return res.status(422).send("Index too high");
     }
     await redisClient.hSet("values", index, "Nothing yet!");
+    console.log("Inserted values");
     await redisClient.publish("insert", index + "");
+    console.log("Published values");
     pgClient.query("INSERT INTO values(number) VALUES($1)", [index]);
+    console.log("Inserted into PG");
     res.send({ working: true });
 });
 
