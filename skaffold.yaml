@@ -1,0 +1,22 @@
+apiVersion: skaffold/v1beta12
+kind: Config
+build:
+   local:
+      push: false
+   artifacts:
+     - image: cspalevic/multi-client
+       context: client
+       docker:
+         dockerfile: client/Dockerfile.dev
+       sync:
+         manual:
+           - src: '**/*.js'
+             dest: './'
+           - src: '**/*.css'
+             dest: './'
+           - src: '**/*.html'
+             dest: './'
+deploy:
+   kubectl:
+      manifests:
+         - k8s/client-deployment.yml
