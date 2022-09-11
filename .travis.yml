@@ -2,9 +2,28 @@ sudo: required
 services:
    - docker
 
+env:
+   global:
+      - SHA=$(git rev-parse HEAD)
+      - CLOUDSDK_CORE_DISABLE_PROMPTS=1
+
 before_install:
-   - openssl aes-256-cbc -K $encrypted_2685403ab8b4_key -iv $encrypted_2685403ab8b4_iv -in fibonacci-k8s-system-f7765256f603.json.enc -out fibonacci-k8s-system-f7765256f603.json -d
+   - openssl aes-256-cbc -K $encrypted_2685403ab8b4_key -iv $encrypted_2685403ab8b4_iv -in fibonacci-k8s-system-f7765256f603.json.enc -out service-account.json -d
    - curl https://sdk.cloud.google.com | bash > /dev/null;
    - source $HOME/google-cloud-sdk/path.bash.inc
    - gcloud components update kubectl
    - gcloud auth activate-service-account --key-file service-account.json
+   - gcloud config set project fibonacci-k8s-system
+   - gcloud config set compute/zone us-central1-c
+   - gcloud container clusters get-credentials my-first-cluter-1
+   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+   - docker build -t cspalevic/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+   - docker run cspalevic/react-test npm test -- --coverage
+
+deploy:
+   provider: script
+   script: bash ./deploy.sh
+   on:
+      branch: main
