@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+   name: api-deployment
+spec:
+   replicas: 3
+   selector:
+      matchLabels:
+         component: api
+   template:
+      metadata:
+         labels:
+            component: api
+      spec:
+         containers:
+            - name: api
+              image: cspalevic/multi-api
+              ports:
+               - containerPort: 5000 
+              env:
+               - name: REDIS_HOST
+                 value: redis-cluster-ip-service
+               - name: REDIS_PORT
+                 value: '6379'
+               - name: POSTGRES_USER
+                 value: postgres
+               - name: POSTGRES_HOST
+                 value: postgres-cluster-ip-service
+               - name: POSTGRES_DB
+                 value: postgres
+               - name: POSTGRES_PORT
+                 value: '5432'
+               - name: POSTGRES_PASSWORD
+                 valueFrom:
+                  secretKeyRef:
+                    name: postgrespassword
+                    key: POSTGRES_PASSWORD 
